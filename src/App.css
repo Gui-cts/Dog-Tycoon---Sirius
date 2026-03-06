@@ -1,0 +1,349 @@
+/* Reset básico */
+body {
+  background-color: #1a1a2e;
+  color: #fff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.jogo-container {
+  width: 100%;
+  max-width: 1000px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header-jogo h1 {
+  font-size: 2.5rem;
+  color: #e94560;
+  margin: 0 0 20px 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Layout da Tela */
+.layout-principal {
+  display: flex;
+  width: 100%;
+  gap: 20px;
+  align-items: stretch;
+}
+
+.coluna-status {
+  width: 280px;
+  min-width: 280px;
+  flex-shrink: 0;
+  background-color: #16213e;
+  border: 2px solid #0f3460;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+.coluna-status h2 {
+  margin-top: 0;
+  color: #e94560;
+  text-align: center;
+  border-bottom: 1px solid #0f3460;
+  padding-bottom: 10px;
+}
+
+/* Barras de Progresso */
+.status-item {
+  margin-bottom: 15px;
+}
+
+.status-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+progress {
+  width: 100%;
+  height: 18px;
+  border-radius: 10px;
+  border: 1px solid #000;
+}
+
+progress::-webkit-progress-bar {
+  background-color: #333;
+  border-radius: 10px;
+}
+
+progress::-webkit-progress-value {
+  border-radius: 10px;
+  transition: width 0.3s ease;
+}
+
+.prog-energia::-webkit-progress-value { background-color: #ffd700; }
+.prog-fome::-webkit-progress-value { background-color: #f44336; }
+.prog-felicidade::-webkit-progress-value { background-color: #4caf50; }
+.prog-sujeira::-webkit-progress-value { background-color: #8d6e63; }
+
+/* Cenário Interativo */
+.sala-container {
+  flex: 1;
+  min-width: 400px;
+  min-height: 500px;
+  position: relative;
+  overflow: hidden;
+  background-image: url('./sala-bg.png');
+  background-size: cover;
+  background-position: center;
+  border-radius: 15px;
+  border: 4px solid #fff;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.painel-moedas {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 10px 20px;
+  border-radius: 15px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ffd700;
+  border: 2px solid #ffd700;
+  z-index: 20;
+}
+
+/* Sprites Clicáveis */
+.sprite-clicavel {
+  position: absolute;
+  cursor: pointer;
+  transition: transform 0.2s, filter 0.2s;
+  user-select: none;
+}
+
+.sprite-clicavel:hover {
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+}
+
+.sprite-clicavel:active {
+  transform: scale(0.95);
+}
+
+/* Posições */
+.sprite-dog {
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 8;
+}
+
+.sprite-dog:hover {
+  transform: translateX(-50%) scale(1.05);
+}
+
+.sprite-dog:active {
+  transform: translateX(-50%) scale(0.95);
+}
+
+.sprite-tigela {
+  bottom: 0%;
+  right: 75%;
+  z-index: 8;
+}
+
+.sprite-casinha {
+  bottom: 100px;
+  left: -50px;
+  z-index: 20;
+}
+
+.sprite-mochila {
+  bottom: 0px;
+  right: 20px;
+  z-index: 15;
+}
+
+.sprite-sacola {
+  top: 30px;
+  right: 0px;
+  z-index: 15;
+}
+
+/* Contadores e Balões */
+.contador-central {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(22, 33, 62, 0.9);
+  padding: 30px;
+  border-radius: 20px;
+  border: 3px solid #e94560;
+  text-align: center;
+  z-index: 50;
+}
+
+.timer-display {
+  font-size: 3rem;
+  font-weight: bold;
+  color: #e94560;
+  margin: 10px 0;
+}
+
+.balao-sono {
+  position: absolute;
+  bottom: 280px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 8px 15px;
+  border-radius: 20px;
+  color: #4caf50;
+  font-size: 1rem;
+  font-weight: bold;
+  z-index: 30;
+  border: 2px solid #4caf50;
+  white-space: nowrap;
+}
+
+/* Modais */
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  backdrop-filter: blur(3px);
+}
+
+.modal-conteudo {
+  background-color: #16213e;
+  border: 2px solid #e94560;
+  border-radius: 15px;
+  padding: 25px;
+  width: 90%;
+  max-width: 400px;
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
+}
+
+.btn-fechar {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.modal-conteudo h2 {
+  margin-top: 0;
+  text-align: center;
+  border-bottom: 1px solid #444;
+  padding-bottom: 10px;
+}
+
+/* Utilitários e Botões */
+.mt-2 {
+  margin-top: 10px;
+}
+
+.mt-3 {
+  margin-top: 20px;
+}
+
+.divisoria {
+  border-color: #444;
+  margin: 15px 0;
+}
+
+.grid-botoes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+}
+
+.btn {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 8px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s, opacity 0.2s;
+  color: white;
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(100%);
+}
+
+.btn-reset {
+  background: transparent;
+  color: #666;
+  border: 1px solid #666;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Cores de Botão */
+.btn-verde { background-color: #4caf50; }
+.btn-azul { background-color: #00bcd4; }
+.btn-laranja { background-color: #ff9800; }
+.btn-roxo { background-color: #9c27b0; }
+.btn-amarelo { background-color: #ffc107; color: black; }
+.btn-cinza { background-color: #666; color: white; }
+
+/* --- RESPONSIVIDADE PARA CELULARES --- */
+@media (max-width: 768px) {
+  .layout-principal {
+    flex-direction: column; /* Coloca o menu em cima e a sala embaixo */
+  }
+  
+  .coluna-status {
+    width: 100%;
+    min-width: auto;
+    box-sizing: border-box; 
+  }
+
+  .sala-container {
+    min-width: 100%;
+    min-height: 400px;
+    margin-bottom: 20px;
+  }
+  
+  /* Diminui os sprites para caberem melhor na tela do celular */
+  .sprite-dog img { width: 180px !important; }
+  .sprite-casinha img { width: 200px !important; }
+  .sprite-mochila img { width: 100px !important; }
+  .sprite-sacola img { width: 100px !important; }
+  .sprite-tigela img { width: 70px !important; }
+  
+  /* Ajuste das posições no celular */
+  .sprite-dog { left: 50%; }
+  .sprite-casinha { left: 10px; bottom: 70px; }
+  
+  .modal-conteudo { 
+    width: 95%; 
+    padding: 15px; 
+  }
+}

@@ -1,5 +1,8 @@
 # 🐾 Dog Tycoon - Sirius
 
+<img width="999" height="741" alt="{1363316F-CC29-43FA-812F-B32087AB48D7}" src="https://github.com/user-attachments/assets/1dfecd7f-4edd-44dd-9915-29652c1c3507" />
+
+
 **Dog Tycoon** é um jogo web incremental (estilo tycoon/tamagotchi) onde o jogador gerencia a rotina de um Husky chamado Sirius. O objetivo é equilibrar as necessidades do pet enquanto ele realiza trabalhos para ganhar *Dogcoins*, permitindo comprar melhores rações, brinquedos e evoluir sua moradia de uma simples caixa de papelão até uma mansão canina.
 
 🎮 **[Jogue agora mesmo!](https://dog-tycoon-sirius.vercel.app)**

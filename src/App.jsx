@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import './App.css'
 import videoDog from './dog.gif'
 import imgDogDormindo from './husky_dormindo.png'; 
-import imgDogBanho from './dog-banho.png';
+import imgDogBanho from './dog-banho.png'; 
 import imgCasinha1 from './casinha-papelao.png';
 import imgCasinha2 from './casinha-pano.png';  
 import imgCasinha3 from './casinha-madeira.png'; 
@@ -136,10 +136,10 @@ function App() {
   const calcularRecompensaReal = (recompensaBase) => {
     let ganho = Number(recompensaBase) || 0;
     
-    // SISTEMA DE BUFFS E DEBUFFS APLICADOS AQUI:
-    if (felicidade >= 80) ganho = Math.ceil(ganho * 1.2);   // +20% se feliz
-    if (sujeira >= 75) ganho = Math.floor(ganho / 2);       // -50% se sujo
-    if (fome >= 80) ganho = Math.floor(ganho * 0.8);        // -20% se faminto
+    // SISTEMA DE BUFFS E DEBUFFS
+    if (felicidade >= 80) ganho = Math.ceil(ganho * 1.2);   // +20%
+    if (sujeira >= 75) ganho = Math.floor(ganho / 2);       // -50%
+    if (fome >= 80) ganho = Math.floor(ganho * 0.8);        // -20%
     
     if (brinquedoEquipado && brinquedoEquipado.multiplicador) {
       ganho = Math.ceil(ganho * Number(brinquedoEquipado.multiplicador));
@@ -274,7 +274,6 @@ function App() {
 
           {acaoAtual === 'DORMINDO' && <div className="balao-sono">Zzz... {CASINHAS[nivelCasinha].textoLabel}</div>}
 
-          {/* O CACHORRO AGORA NÃO SOME DURANTE O BANHO! */}
           {['LIVRE', 'DORMINDO', 'COMENDO', 'BANHO'].includes(acaoAtual) && (
             <div className="sprite-clicavel sprite-dog" onClick={() => setMenuAberto('ATIVIDADES')} onKeyDown={(e) => lidarComTecla(e, () => setMenuAberto('ATIVIDADES'))} role="button" tabIndex="0">
               <img src={

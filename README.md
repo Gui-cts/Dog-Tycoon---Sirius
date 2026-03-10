@@ -1,16 +1,33 @@
-# React + Vite
+# 🐾 Dog Tycoon - Sirius
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<img width="999" height="741" alt="{1363316F-CC29-43FA-812F-B32087AB48D7}" src="https://github.com/user-attachments/assets/1dfecd7f-4edd-44dd-9915-29652c1c3507" />
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+**Dog Tycoon** é um jogo web incremental (estilo tycoon/tamagotchi) onde o jogador gerencia a rotina de um Husky chamado Sirius. O objetivo é equilibrar as necessidades do pet enquanto ele realiza trabalhos para ganhar *Dogcoins*, permitindo comprar melhores rações, brinquedos e evoluir sua moradia de uma simples caixa de papelão até uma mansão canina.
 
-## React Compiler
+🎮 **[Jogue agora mesmo!](https://dog-tycoon-sirius.vercel.app)**
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🚀 Tecnologias Utilizadas
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Este projeto foi desenvolvido utilizando o ecossistema moderno do desenvolvimento web:
+
+* **[React](https://reactjs.org/):** Biblioteca principal para construção da interface e gerenciamento de estado.
+* **[Vite](https://vitejs.dev/):** Ferramenta de build super rápida que substitui o Create React App.
+* **JavaScript (ES6+):** Lógica do jogo, cálculos de tempo e manipulação de objetos.
+* **CSS3:** Estilização responsiva, Flexbox e animações CSS (`@keyframes`).
+
+---
+
+## 🧠 Conceitos Aplicados (Destaques Técnicos)
+
+Desenvolvido como um projeto de portfólio, este jogo implementa diversos conceitos cruciais da engenharia front-end:
+
+* **Game Loop:** Utilização de `setInterval` dentro de um `useEffect` para criar um relógio interno rodando a 1 frame por segundo, processando fome, tristeza e tempo de conclusão de tarefas em tempo real.
+* **Persistência de Dados:** Integração robusta com o `localStorage` do navegador (Auto-Save). O jogador pode fechar a aba e, ao voltar, seu progresso, moedas e itens continuam intactos.
+* **Progressão Offline:** Lógica matemática que calcula a diferença entre o tempo atual (`Date.now()`) e o último acesso do jogador para recompensar o descanso do pet mesmo com o jogo fechado.
+* **Gerenciamento de Estado Complexo:** Uso intensivo do hook `useState` para controlar múltiplas variáveis interdependentes (energia, fome, sujeira, inventário, nível da casa).
+* **Componentização e Renderização Condicional:** Modais dinâmicos e sprites que mudam baseados no estado atual da aplicação (ex: o cachorro dormindo, acordado ou comendo).
+
+---

@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import './App.css'
 import videoDog from './dog.gif'
 import imgDogDormindo from './husky_dormindo.png'; 
-import imgDogBanho from './dog-banho.png'; 
 import imgCasinha1 from './casinha-papelao.png';
 import imgCasinha2 from './casinha-pano.png';  
 import imgCasinha3 from './casinha-madeira.png'; 
@@ -25,6 +24,7 @@ const RACOES = {
   premium: { nome: 'Patê Premium', preco: 50, saciedade: 100, felicidade: 40, icone: '🥩' }
 };
 
+// --- BRINQUEDOS CORRIGIDOS (Multiplicador e Durabilidade) ---
 const BRINQUEDOS = {
   graveto: { nome: 'Graveto', preco: 30, multiplicador: 2, durabilidade: 5, icone: '🪵' },
   bolinha: { nome: 'Bolinha', preco: 100, multiplicador: 3, durabilidade: 10, icone: '🎾' },
@@ -63,10 +63,11 @@ function App() {
   
   const [inventarioRacoes, setInventarioRacoes] = useState(saveAntigo?.inventarioRacoes ?? { biscoito: 0, comum: 0, premium: 0 })
   const [inventarioBrinquedos, setInventarioBrinquedos] = useState(saveAntigo?.inventarioBrinquedos ?? { graveto: 0, bolinha: 0, frisbee: 0 })
-  const [brinquedoEquipado, setBrinquedoEquipado] = useState(saveAntigo?.brinquedoEquipado ?? null) 
+  const [brinquedoEquipado, setBrinquedoEquipado] = useState(saveAntigo?.brinquedoEquipado ?? null) // Novo estado para o brinquedo em uso
   const [nivelCasinha, setNivelCasinha] = useState(saveAntigo?.nivelCasinha ?? 1)
   const [menuAberto, setMenuAberto] = useState('NENHUM');
 
+  // Descanso Offline
   useEffect(() => {
     if (saveAntigo && saveAntigo.acaoAtual === 'DORMINDO') {
       const agora = Date.now();
@@ -82,6 +83,7 @@ function App() {
     }
   }, []);
 
+  // Auto-Save
   useEffect(() => {
     if (bloqueiaSave) return;
     localStorage.setItem('dogTycoonSave', JSON.stringify({
@@ -91,6 +93,7 @@ function App() {
     }));
   }, [dogcoins, energia, fome, felicidade, sujeira, acaoAtual, tempoFimAcao, recompensaPendente, ultimoDrain, ultimoTickGeral, inventarioRacoes, inventarioBrinquedos, brinquedoEquipado, nivelCasinha]);
 
+  // Game Loop
   useEffect(() => {
     const loop = setInterval(() => {
       const agora = Date.now(); 
@@ -103,11 +106,8 @@ function App() {
       }
 
       if (tempoFimAcao && agora >= tempoFimAcao) {
-        if (ACOES_TRABALHO[acaoAtual]) {
-            setDogcoins(prev => prev + (Number(recompensaPendente) || 0));
-        }
+        if (ACOES_TRABALHO[acaoAtual]) setDogcoins(prev => prev + recompensaPendente);
         if (acaoAtual === 'BANHO') setSujeira(0);
-        
         setAcaoAtual('LIVRE');
         setTempoFimAcao(null);
         setRecompensaPendente(0);
@@ -127,43 +127,37 @@ function App() {
     setEnergia(prev => Math.max(0, prev - energiaCusto));
     setFome(prev => Math.min(100, prev + fomeCusto)); 
     setSujeira(prev => Math.min(100, prev + sujeiraCusto));
-    setRecompensaPendente(recompensa || 0);
+    setRecompensaPendente(recompensa);
     setTempoFimAcao(Date.now() + tempoMs); 
     setAcaoAtual(tipo);
     setMenuAberto('NENHUM');
   };
 
-  const calcularRecompensaReal = (recompensaBase) => {
-    let ganho = Number(recompensaBase) || 0;
-    
-    // SISTEMA DE BUFFS E DEBUFFS
-    if (felicidade >= 80) ganho = Math.ceil(ganho * 1.2);   // +20%
-    if (sujeira >= 75) ganho = Math.floor(ganho / 2);       // -50%
-    if (fome >= 80) ganho = Math.floor(ganho * 0.8);        // -20%
-    
-    if (brinquedoEquipado && brinquedoEquipado.multiplicador) {
-      ganho = Math.ceil(ganho * Number(brinquedoEquipado.multiplicador));
-    }
-    return ganho;
-  };
-
+  // --- LÓGICA DE TRABALHO COM MULTIPLICADOR ---
   const trabalhar = (id) => {
     if (acaoAtual !== 'LIVRE') return;
     const a = ACOES_TRABALHO[id];
     if (energia < a.energia) return alert("Energia insuficiente!");
-    if (fome >= 100) return alert("Sirius está com muita fome e se recusa a trabalhar!");
+    if (fome >= 100) return alert("Sirius está com muita fome!");
 
-    const ganhoFinal = calcularRecompensaReal(a.recompensa);
+    let ganho = a.recompensa;
+    
+    // Bônus/Penalidades de Status
+    if (felicidade >= 80) ganho = Math.ceil(ganho * 1.2);
+    if (sujeira >= 75) ganho = Math.floor(ganho / 2);
 
+    // Bônus do Brinquedo Equipado e Consumo de Durabilidade
     if (brinquedoEquipado) {
+      ganho = Math.ceil(ganho * brinquedoEquipado.multiplicador);
+      
       setBrinquedoEquipado(prev => {
         const novosUsos = prev.usosRestantes - 1;
-        if (novosUsos <= 0) return null; 
+        if (novosUsos <= 0) return null; // Quebrou o brinquedo
         return { ...prev, usosRestantes: novosUsos };
       });
     }
 
-    iniciarAcao(id, a.tempo * 1000, ganhoFinal, a.energia, a.fome, a.sujeira);
+    iniciarAcao(id, a.tempo * 1000, ganho, a.energia, a.fome, a.sujeira);
   };
 
   const equiparBrinquedo = (tipo) => {
@@ -231,28 +225,16 @@ function App() {
           <div className="status-item"><div className="status-label">❤️ Feliz <span>{felicidade}%</span></div><progress className="prog-felicidade" value={felicidade} max="100"></progress></div>
           <div className="status-item"><div className="status-label">🧽 Sujeira <span>{sujeira}%</span></div><progress className="prog-sujeira" value={sujeira} max="100"></progress></div>
           
-          {/* EFEITOS ATIVOS (UI Nova para mostrar Buffs/Debuffs) */}
+          {/* Mostrador do Brinquedo Atual */}
           <div className="status-item mt-3">
-            <div className="status-label" style={{ borderTop: '1px solid #444', paddingTop: '10px' }}>
-              ✨ Efeitos Ativos
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', backgroundColor: '#1a2642', border: '1px solid #2a3a5a', padding: '10px', borderRadius: '8px', marginTop: '5px' }}>
-              {felicidade >= 80 && <span style={{ color: '#4caf50', fontSize: '0.85rem' }}>🟢 Feliz (+20% 💰)</span>}
-              {sujeira >= 75 && <span style={{ color: '#f44336', fontSize: '0.85rem' }}>🔴 Sujo (-50% 💰)</span>}
-              {fome >= 80 && <span style={{ color: '#f44336', fontSize: '0.85rem' }}>🔴 Faminto (-20% 💰)</span>}
-              {felicidade < 80 && sujeira < 75 && fome < 80 && <span style={{ color: '#aaa', fontSize: '0.85rem' }}>Nenhum no momento</span>}
-            </div>
-          </div>
-
-          <div className="status-item mt-3">
-            <div className="status-label" style={{ borderTop: '1px solid #444', paddingTop: '10px' }}>
+            <div className="status-label" style={{ borderTop: '1px solid #0f3460', paddingTop: '10px' }}>
               🧸 Brinquedo Equipado
             </div>
-            <div style={{ backgroundColor: '#1a2642', border: '1px solid #2a3a5a', padding: '10px', borderRadius: '8px', textAlign: 'center', marginTop: '5px' }}>
+            <div style={{ backgroundColor: '#0f3460', padding: '10px', borderRadius: '8px', textAlign: 'center', marginTop: '5px' }}>
               {brinquedoEquipado ? (
                 <>
                   <span style={{ fontSize: '1.5rem' }}>{brinquedoEquipado.icone}</span>
-                  <div style={{ fontSize: '0.85rem', color: '#00d2ff', fontWeight: 'bold' }}>{brinquedoEquipado.multiplicador}x Dogcoins</div>
+                  <div style={{ fontSize: '0.8rem', color: '#4caf50' }}>{brinquedoEquipado.multiplicador}x Dogcoins</div>
                   <div style={{ fontSize: '0.8rem', color: '#aaa' }}>Restam {brinquedoEquipado.usosRestantes} usos</div>
                 </>
               ) : (
@@ -274,15 +256,9 @@ function App() {
 
           {acaoAtual === 'DORMINDO' && <div className="balao-sono">Zzz... {CASINHAS[nivelCasinha].textoLabel}</div>}
 
-          {['LIVRE', 'DORMINDO', 'COMENDO', 'BANHO'].includes(acaoAtual) && (
-            <div className="sprite-clicavel sprite-dog" onClick={() => setMenuAberto('ATIVIDADES')} onKeyDown={(e) => lidarComTecla(e, () => setMenuAberto('ATIVIDADES'))} role="button" tabIndex="0">
-              <img src={
-                acaoAtual === 'DORMINDO' ? imgDogDormindo : 
-                acaoAtual === 'BANHO' ? imgDogBanho : 
-                videoDog
-              } alt="Sirius" style={{ width: (acaoAtual === 'DORMINDO' || acaoAtual === 'BANHO') ? '200px' : '300px' }} />
-            </div>
-          )}
+          <div className="sprite-clicavel sprite-dog" onClick={() => setMenuAberto('ATIVIDADES')} onKeyDown={(e) => lidarComTecla(e, () => setMenuAberto('ATIVIDADES'))} role="button" tabIndex="0">
+            <img src={acaoAtual === 'DORMINDO' ? imgDogDormindo : videoDog} alt="Sirius" style={{ width: acaoAtual === 'DORMINDO' ? '200px' : '300px' }} />
+          </div>
 
           <div className="sprite-clicavel sprite-tigela" onClick={() => setMenuAberto('COMIDA')} role="button" tabIndex="0"><img src={acaoAtual === 'COMENDO' ? imgTigela1 : imgTigela2} alt="Tigela" style={{ width: '100px' }} /></div>
           <div className="sprite-clicavel sprite-sacola" onClick={() => setMenuAberto('LOJA')} role="button" tabIndex="0"><img src={imgSacola} alt="Loja" style={{ width: '150px' }} /></div>
@@ -304,25 +280,22 @@ function App() {
                   <><h2>Trabalhos</h2>
                   {Object.entries(ACOES_TRABALHO).map(([id, acao]) => (
                     <button key={id} className="btn btn-verde" onClick={() => trabalhar(id)} disabled={acaoAtual !== 'LIVRE'}>
-                      {acao.icone} {acao.nome} | +{calcularRecompensaReal(acao.recompensa)}💰
+                      {acao.icone} {acao.nome} | +{acao.recompensa}💰
                     </button>
                   ))}
-                  <button className="btn btn-azul mt-2" onClick={darBanho} disabled={acaoAtual !== 'LIVRE'}>🧽 Dar Banho (30s)</button>
-                  
-                  <hr className="divisoria" />
-                  
-                  <h2>Equipar Brinquedo</h2>
-                  <p style={{ fontSize: '0.8rem', color: '#aaa', margin: '0 0 10px 0' }}>Multiplica ganhos de trabalho.</p>
-                  <div className="grid-botoes">
-                    {Object.keys(BRINQUEDOS).map(t => <button key={t} className="btn btn-azul" onClick={() => equiparBrinquedo(t)} disabled={inventarioBrinquedos[t] <= 0}>{BRINQUEDOS[t].icone} ({inventarioBrinquedos[t]})</button>)}
-                  </div>
-                  </>
+                  <button className="btn btn-azul mt-2" onClick={darBanho} disabled={acaoAtual !== 'LIVRE'}>🧽 Dar Banho (30s)</button></>
                 )}
 
                 {menuAberto === 'COMIDA' && (
                   <><h2>Alimentar</h2>
                   <div className="grid-botoes">
                     {Object.keys(RACOES).map(t => <button key={t} className="btn btn-laranja" onClick={() => alimentar(t)} disabled={inventarioRacoes[t] <= 0}>{RACOES[t].icone} ({inventarioRacoes[t]})</button>)}
+                  </div>
+                  <hr className="divisoria" />
+                  <h2>Equipar Brinquedo</h2>
+                  <p style={{ fontSize: '0.8rem', color: '#aaa', margin: '0 0 10px 0' }}>Multiplica ganhos de trabalho.</p>
+                  <div className="grid-botoes">
+                    {Object.keys(BRINQUEDOS).map(t => <button key={t} className="btn btn-azul" onClick={() => equiparBrinquedo(t)} disabled={inventarioBrinquedos[t] <= 0}>{BRINQUEDOS[t].icone} ({inventarioBrinquedos[t]})</button>)}
                   </div></>
                 )}
 
